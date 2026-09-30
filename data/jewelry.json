@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Labret",
+    "variant": "flatback",
+    "type": "Labret / post",
+    "gauge": "16G",
+    "size": "6mm",
+    "material": "",
+    "price": null,
+    "availability": "ask",
+    "photo": "",
+    "hidden": false
+  },
+  {
+    "name": "Labret",
+    "variant": "flatback",
+    "type": "Labret / post",
+    "gauge": "16G",
+    "size": "8mm",
+    "material": "",
+    "price": null,
+    "availability": "ask",
+    "photo": "",
+    "hidden": false
+  },
+  {
+    "name": "Labret",
+    "variant": "flatback",
+    "type": "Labret / post",
+    "gauge": "16G",
+    "size": "10mm",
+    "material": "",
+    "price": null,
+    "availability": "ask",
+    "photo": "",
+    "hidden": false
+  },
+  {
+    "name": "Labret",
+    "variant": "flatback",
+    "type": "Labret / post",
+    "gauge": "16G",
+    "size": "12mm",
+    "material": "",
+    "price": null,
+    "availability": "ask",
+    "photo": "",
+    "hidden": false
+  },
+  {
+    "name": "Crystal top",
+    "variant": "S",
+    "type": "Top / end",
+    "gauge": "16G",
+    "size": "",
+    "material": "",
+    "price": null,
+    "availability": "ask",
+    "photo": "",
+    "hidden": false
+  },
+  {
+    "name": "Crystal top",
+    "variant": "M",
+    "type": "Top / end",
+    "gauge": "16G",
+    "size": "",
+    "material": "",
+    "price": null,
+    "availability": "ask",
+    "photo": "",
+    "hidden": false
+  },
+  {
+    "name": "Crystal top",
+    "variant": "L",
+    "type": "Top / end",
+    "gauge": "16G",
+    "size": "",
+    "material": "",
+    "price": null,
+    "availability": "ask",
+    "photo": "",
+    "hidden": false
+  },
+  {
+    "name": "Diamond top",
+    "variant": "clear",
+    "type": "Top / end",
+    "gauge": "16G",
+    "size": "",
+    "material": "",
+    "price": null,
+    "availability": "ask",
+    "photo": "",
+    "hidden": false
+  },
+  {
+    "name": "Diamond top",
+    "variant": "black",
+    "type": "Top / end",
+    "gauge": "16G",
+    "size": "",
+    "material": "",
+    "price": null,
+    "availability": "ask",
+    "photo": "",
+    "hidden": false
+  },
+  {
+    "name": "Diamond top",
+    "variant": "color",
+    "type": "Top / end",
+    "gauge": "16G",
+    "size": "",
+    "material": "",
+    "price": null,
+    "availability": "ask",
+    "photo": "",
+    "hidden": false
+  }
+]

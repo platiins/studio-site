@@ -1,0 +1,25 @@
+{
+  "studioName": "",
+  "instagram": "",
+  "eyebrow": "Piercing studio",
+  "headline1": "Jewelry",
+  "headline2": "in stock",
+  "intro": "Browse what we have ready for your piercing or jewelry change. Everything here can be fitted at your appointment.",
+  "reserveTitle": "Want a piece saved for you?",
+  "reserveSteps": [
+    "Take a screenshot of the piece you like.",
+    "Send it to us in Instagram direct messages with your appointment date.",
+    "We hold it for you until your visit."
+  ],
+  "footer": "Stock changes every day. If a piece sold out after the last update, we'll suggest the closest match.",
+  "updated": "2026-09-30",
+  "design": {
+    "theme": "titanium",
+    "accent": "",
+    "headlineFont": "Syne",
+    "textFont": "Figtree",
+    "cornerRadius": 16,
+    "cardSize": "regular",
+    "colorStripe": true
+  }
+}
