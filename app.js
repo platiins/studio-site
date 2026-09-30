@@ -40,6 +40,9 @@
   const TEXT_FONTS = ["Figtree", "DM Sans", "Manrope", "Nunito Sans", "Karla", "Lora"];
   const CARD_SIZES = { small: 170, regular: 210, large: 270 };
 
+  // Gauge -> thickness in mm, shown next to the gauge in the size panel.
+  const GAUGE_MM = { "20G": "0.8mm", "18G": "1.0mm", "16G": "1.2mm", "14G": "1.6mm", "12G": "2.0mm", "10G": "2.5mm" };
+
   /* ---------- helpers ---------- */
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -47,6 +50,18 @@
   const fmtDate = (d) => { const t = new Date(d + "T12:00:00"); return isNaN(t) ? (d || "") : t.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }); };
   const typeOf = (it) => (TYPES.includes(it.type) ? it.type : "Other");
   const rank = (it) => ({ in: 0, low: 1, ask: 2, out: 3 }[it.availability] ?? 2);
+  // "sizes" list: [{ gauge: "16G", lengths: ["6mm", "8mm"] }]. Missing or empty = none.
+  const sizesOf = (it) => (Array.isArray(it.sizes) ? it.sizes : []).filter((s) => s && s.gauge);
+  // Rings are measured across (diameter); posts and barbells by length.
+  const lengthWord = (it) => (typeOf(it) === "Ring" ? "Diameter" : "Length");
+  function lengthRange(sizes) {
+    const all = sizes.flatMap((s) => (Array.isArray(s.lengths) ? s.lengths : [])).filter(Boolean);
+    const nums = all.map(parseFloat);
+    if (!all.length) return "";
+    if (nums.some(isNaN)) return [...new Set(all)].join(", ");
+    const lo = Math.min(...nums), hi = Math.max(...nums);
+    return lo === hi ? `${lo}mm` : `${lo}–${hi}mm`;
+  }
 
   let site = {}, items = [], filter = "all";
 
@@ -85,11 +100,18 @@
     const defs = `<defs><linearGradient id="m${k}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--metal-hi)"/><stop offset=".5" stop-color="var(--metal-mid)"/><stop offset="1" stop-color="var(--metal-lo)"/></linearGradient>` +
       `<linearGradient id="rb${k}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f28bb3"/><stop offset=".35" stop-color="#9d8cf2"/><stop offset=".65" stop-color="#6cc6e8"/><stop offset="1" stop-color="#8fe0b0"/></linearGradient></defs>`;
     let g = "";
+    const shape = ((it.name || "") + " " + (it.variant || "")).toLowerCase();
     if (t === "Labret / post") {
       const len = Math.min(84, 30 + size * 4);
-      g = `<ellipse cx="60" cy="${60 + len / 2}" rx="26" ry="7" fill="${metal}"/><rect x="56" y="${60 - len / 2}" width="8" height="${len}" rx="3" fill="${metal}"/><circle cx="60" cy="${60 - len / 2}" r="5" fill="var(--metal-mid)"/>`;
+      const top = shape.includes("ball") ? `<circle cx="60" cy="${60 - len / 2}" r="12" fill="${metal}"/>` : `<circle cx="60" cy="${60 - len / 2}" r="5" fill="var(--metal-mid)"/>`;
+      g = `<ellipse cx="60" cy="${60 + len / 2}" rx="26" ry="7" fill="${metal}"/><rect x="56" y="${60 - len / 2}" width="8" height="${len}" rx="3" fill="${metal}"/>${top}`;
+    } else if (t === "Ring" && shape.includes("circular")) {
+      // horseshoe: open at the bottom, a ball on each end
+      g = `<path d="M40 88 A34 34 0 1 1 80 88" fill="none" stroke="${metal}" stroke-width="7" stroke-linecap="round"/><circle cx="38" cy="92" r="11" fill="${metal}"/><circle cx="82" cy="92" r="11" fill="${metal}"/>`;
     } else if (t === "Ring") {
       g = `<circle cx="60" cy="60" r="34" fill="none" stroke="${metal}" stroke-width="7"/>`;
+    } else if (t === "Barbell" && shape.includes("curved")) {
+      g = `<path d="M28 50 Q60 104 92 50" fill="none" stroke="${metal}" stroke-width="7" stroke-linecap="round"/><circle cx="26" cy="44" r="11" fill="${metal}"/><circle cx="94" cy="44" r="11" fill="${metal}"/>`;
     } else if (t === "Barbell") {
       g = `<rect x="24" y="56" width="72" height="8" rx="4" fill="${metal}"/><circle cx="22" cy="60" r="11" fill="${metal}"/><circle cx="98" cy="60" r="11" fill="${metal}"/>`;
     } else if (t === "Aftercare") {
@@ -110,21 +132,60 @@
   }
 
   /* ---------- one jewelry card ---------- */
+  const visualOf = (it) => it.photo
+    ? `<img src="${esc(it.photo)}" alt="${esc(it.name)} ${esc(it.variant)}" loading="lazy">`
+    : drawing(it);
+  const priceOf = (it) => typeof it.price === "number"
+    ? `<div class="price">${eur(it.price)}</div>`
+    : `<div class="price none">Price in studio</div>`;
+
   function card(it) {
     const [cls, label] = AVAILABILITY[it.availability] || AVAILABILITY.ask;
-    const specs = [it.gauge, it.size, it.material].filter(Boolean).map(esc).join(" · ");
-    const visual = it.photo
-      ? `<img src="${esc(it.photo)}" alt="${esc(it.name)} ${esc(it.variant)}" loading="lazy">`
-      : drawing(it);
-    const price = typeof it.price === "number"
-      ? `<div class="price">${eur(it.price)}</div>`
-      : `<div class="price none">Price in studio</div>`;
-    return `<article class="card${it.availability === "out" ? " is-out" : ""}">
-      <div class="well">${visual}<span class="pill ${cls}">${label}</span></div>
+    const sizes = sizesOf(it);
+    // Pieces with a "sizes" list show a short summary and open the size panel on tap.
+    const specs = (sizes.length
+      ? [sizes.map((s) => s.gauge).join(" / "), lengthRange(sizes), it.material]
+      : [it.gauge, it.size, it.material]).filter(Boolean).map(esc).join(" · ");
+    const title = `${esc(it.name)}${it.variant ? ` <span class="variant">${esc(it.variant)}</span>` : ""}`;
+    return `<article class="card${it.availability === "out" ? " is-out" : ""}${sizes.length ? " has-sizes" : ""}">
+      <div class="well">${visualOf(it)}<span class="pill ${cls}">${label}</span></div>
       <div class="info">
-        <h3 class="name">${esc(it.name)}${it.variant ? ` <span class="variant">${esc(it.variant)}</span>` : ""}</h3>
-        ${specs ? `<div class="specs">${specs}</div>` : ""}${price}
+        <h3 class="name">${sizes.length ? `<button class="open" type="button" data-i="${items.indexOf(it)}">${title}</button>` : title}</h3>
+        ${specs ? `<div class="specs">${specs}</div>` : ""}${priceOf(it)}
+        ${sizes.length ? `<div class="more" aria-hidden="true">See sizes</div>` : ""}
       </div></article>`;
+  }
+
+  /* ---------- size panel (opens when a piece with sizes is tapped) ---------- */
+  function openSizes(it) {
+    let dlg = $("#sizes");
+    if (!dlg) {
+      dlg = document.createElement("dialog");
+      dlg.id = "sizes"; dlg.className = "sheet"; dlg.setAttribute("aria-labelledby", "sizes-title");
+      document.body.appendChild(dlg);
+    }
+    const [cls, label] = AVAILABILITY[it.availability] || AVAILABILITY.ask;
+    const rows = sizesOf(it).map((s) => {
+      const lengths = (Array.isArray(s.lengths) ? s.lengths : []).filter(Boolean);
+      return `<tr><th scope="row">${esc(s.gauge)}${GAUGE_MM[s.gauge] ? `<small>${GAUGE_MM[s.gauge]}</small>` : ""}</th>
+        <td><div class="lens">${lengths.length ? lengths.map((l) => `<span class="len">${esc(l)}</span>`).join("") : `<span class="ask-note">Ask us</span>`}</div></td></tr>`;
+    }).join("");
+    dlg.innerHTML = `<div class="sheet-in">
+      <div class="sheet-top">
+        <div class="well">${visualOf(it)}</div>
+        <div class="sheet-title">
+          <span class="pill ${cls}">${label}</span>
+          <h2 id="sizes-title">${esc(it.name)}${it.variant ? ` <span class="variant">${esc(it.variant)}</span>` : ""}</h2>
+          ${it.material ? `<div class="specs">${esc(it.material)}</div>` : ""}${priceOf(it)}
+        </div>
+        <button class="close" type="button" aria-label="Close">×</button>
+      </div>
+      <table class="size-table">
+        <thead><tr><th scope="col">Gauge</th><th scope="col">${lengthWord(it)}</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <p class="sheet-note">Not sure which size fits? Tell us which piercing it's for and we'll pick the right one at your appointment.</p></div>`;
+    dlg.showModal();
   }
 
   /* ---------- whole page ---------- */
@@ -162,10 +223,14 @@
       ${site.footer ? `<footer>${esc(site.footer)}</footer>` : ""}`;
   }
 
-  /* ---------- clicks: filters + copy button ---------- */
+  /* ---------- clicks: filters, size panel, copy button ---------- */
   document.addEventListener("click", (e) => {
     const chip = e.target.closest(".chip");
     if (chip) { filter = chip.dataset.k; render(); return; }
+    const open = e.target.closest(".open");
+    if (open) { const it = items[open.dataset.i]; if (it) openSizes(it); return; }
+    // close with the × button, or by tapping the dark area around the panel
+    if (e.target.closest(".close") || (e.target.id === "sizes")) { $("#sizes").close(); return; }
     if (e.target.id === "copy") {
       const a = $("#ig"), b = e.target;
       const selectIt = () => getSelection().selectAllChildren(a);

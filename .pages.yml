@@ -32,6 +32,13 @@ content:
       - name: size
         label: Size (empty for tops)
         type: string
+      - name: sizes
+        label: "Sizes available (shown when a customer taps the piece; use instead of Gauge/Size)"
+        type: object
+        list: true
+        fields:
+          - { name: gauge, label: "Gauge (like 16G)", type: string }
+          - { name: lengths, label: "Lengths / diameters (like 8mm)", type: string, list: true }
       - name: material
         label: Material
         type: string

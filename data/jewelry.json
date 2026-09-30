@@ -1,6 +1,54 @@
 [
   {
     "name": "Labret",
+    "variant": "ball top",
+    "type": "Labret / post",
+    "gauge": "",
+    "size": "",
+    "sizes": [
+      { "gauge": "16G", "lengths": ["6mm", "8mm", "10mm", "12mm"] },
+      { "gauge": "14G", "lengths": ["8mm", "10mm", "12mm"] }
+    ],
+    "material": "",
+    "price": null,
+    "availability": "ask",
+    "photo": "/images/labret-ball-top.jpg",
+    "hidden": false
+  },
+  {
+    "name": "Curved barbell",
+    "variant": "ball tops",
+    "type": "Barbell",
+    "gauge": "",
+    "size": "",
+    "sizes": [
+      { "gauge": "16G", "lengths": ["8mm", "10mm"] },
+      { "gauge": "14G", "lengths": ["10mm", "12mm"] }
+    ],
+    "material": "",
+    "price": null,
+    "availability": "ask",
+    "photo": "",
+    "hidden": false
+  },
+  {
+    "name": "Circular barbell",
+    "variant": "ball tops",
+    "type": "Ring",
+    "gauge": "",
+    "size": "",
+    "sizes": [
+      { "gauge": "16G", "lengths": ["8mm", "10mm"] },
+      { "gauge": "14G", "lengths": ["10mm", "12mm"] }
+    ],
+    "material": "",
+    "price": null,
+    "availability": "ask",
+    "photo": "",
+    "hidden": false
+  },
+  {
+    "name": "Labret",
     "variant": "flatback",
     "type": "Labret / post",
     "gauge": "16G",
