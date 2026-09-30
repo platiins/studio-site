@@ -1,0 +1,95 @@
+# Pages CMS config — gives you a no-code editor for the site at https://app.pagescms.org
+# Log in there with GitHub, open this repository, and you'll see "Jewelry" and "Site settings".
+
+media:
+  input: images
+  output: /images
+  categories: [image]
+
+content:
+  - name: jewelry
+    label: Jewelry
+    type: file
+    path: data/jewelry.json
+    format: json
+    list: true
+    fields:
+      - name: name
+        label: Name
+        type: string
+        required: true
+      - name: variant
+        label: Variant / color
+        type: string
+      - name: type
+        label: Type
+        type: select
+        options:
+          values: ["Labret / post", "Top / end", "Ring", "Barbell", "Aftercare", "Other"]
+      - name: gauge
+        label: Gauge
+        type: string
+      - name: size
+        label: Size (empty for tops)
+        type: string
+      - name: material
+        label: Material
+        type: string
+      - name: price
+        label: Price, € (empty = price in studio)
+        type: number
+      - name: availability
+        label: Availability
+        type: select
+        options:
+          values:
+            - { value: in, label: In stock }
+            - { value: low, label: Last pieces }
+            - { value: out, label: Out of stock }
+            - { value: ask, label: Ask about it }
+      - name: photo
+        label: Photo (square works best)
+        type: image
+      - name: hidden
+        label: Hide from customers
+        type: boolean
+
+  - name: site
+    label: Site settings
+    type: file
+    path: data/site.json
+    format: json
+    fields:
+      - { name: studioName, label: Studio name, type: string }
+      - { name: instagram, label: Instagram handle, type: string }
+      - { name: eyebrow, label: Top line (used when studio name is empty), type: string }
+      - { name: headline1, label: Headline line 1, type: string }
+      - { name: headline2, label: Headline line 2 (accent color), type: string }
+      - { name: intro, label: Intro text, type: text }
+      - { name: reserveTitle, label: Reserve box title, type: string }
+      - { name: reserveSteps, label: Reserve steps, type: string, list: true }
+      - { name: footer, label: Small print at the bottom, type: text }
+      - { name: updated, label: Last updated, type: date }
+      - name: design
+        label: Design
+        type: object
+        fields:
+          - name: theme
+            label: Color theme
+            type: select
+            options: { values: [titanium, blush, gold, sage] }
+          - { name: accent, label: "Accent color (hex like #b24a6b, empty = theme color)", type: string }
+          - name: headlineFont
+            label: Headline font
+            type: select
+            options: { values: ["Syne", "Unbounded", "Bricolage Grotesque", "Playfair Display", "DM Serif Display", "Cormorant Garamond"] }
+          - name: textFont
+            label: Text font
+            type: select
+            options: { values: ["Figtree", "DM Sans", "Manrope", "Nunito Sans", "Karla", "Lora"] }
+          - { name: cornerRadius, label: Corner roundness (0–28), type: number }
+          - name: cardSize
+            label: Card size
+            type: select
+            options: { values: [small, regular, large] }
+          - { name: colorStripe, label: Show the anodized color stripe, type: boolean }
